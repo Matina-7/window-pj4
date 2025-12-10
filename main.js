@@ -38,7 +38,7 @@
     gazeEnabled: false,
     gazePosition: { x: 0, y: 0 },
     gazeHistory: [],
-    lastFocusedWindow: null,  // currently focused camera window
+    lastFocusedWindow: null, // currently focused camera window
   };
 
   // Window types used to categorize gaze behavior
@@ -127,6 +127,7 @@
         fixationTime: 0,
       });
 
+      // Mouse click still works, but gaze is primary
       camEl.addEventListener('click', () => {
         labelViewer.textContent = `You clicked: ${type}`;
         state.voyeurScore += type === 'BEDROOM' ? 10 : 4;
@@ -138,6 +139,7 @@
   function updateVoyeurScoreDisplay() {
     scoreVoyeur.textContent = state.voyeurScore.toFixed(0);
   }
+
   // Analyze fixation time by type and update the viewer label text
   function updateViewerLabelFromStats() {
     const totalsByType = {};
@@ -268,6 +270,7 @@
         console.error('WebGazer failed:', err);
       });
 
+    // Update gaze-based fixation and highlighting
     setInterval(updateWallFixationsByGaze, 200);
   }
 
@@ -276,7 +279,7 @@
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
   }
 
-    function updateWallFixationsByGaze() {
+  function updateWallFixationsByGaze() {
     if (state.currentScene !== 'wall' || !state.gazeEnabled) return;
 
     const { x, y } = state.gazePosition;
@@ -310,15 +313,6 @@
     }
   }
 
-
-    if (hitWindow) {
-      hitWindow.fixationTime += dt;
-
-      state.voyeurScore += hitWindow.type === 'BEDROOM' ? 0.3 : 0.1;
-      updateVoyeurScoreDisplay();
-    }
-  }
-
   // ============================
   // 8. Scene Buttons
   // ============================
@@ -348,4 +342,3 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
-
