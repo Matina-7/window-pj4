@@ -32,15 +32,25 @@ const state = {
   wallWindows: [], // {el, type, fixationTime}
   voyeurScore: 0,
   gazeEnabled: false,
-  gazePosition: { x: 0, y: 0 },       // smoothed position used for逻辑
+  gazePosition: { x: 0, y: 0 },       // smoothed position used for logic
   gazeHistory: [],
   gazeSmoothingWindow: [],            // smoothing window for raw points
   lastRawGaze: null,                  // last raw gaze point (for blink detection)
-  displayDotPos: { x: window.innerWidth / 2, y: window.innerHeight / 2 }, // red dot position
+  displayDotPos: {                    // position used to draw red dot
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+  },
   lastFocusedWindow: null,
 };
 
-const WINDOW_TYPES = ["BEDROOM", "OFFICE", "CORRIDOR", "ELEVATOR", "LOBBY", "KITCHEN"];
+const WINDOW_TYPES = [
+  "BEDROOM",
+  "OFFICE",
+  "CORRIDOR",
+  "ELEVATOR",
+  "LOBBY",
+  "KITCHEN",
+];
 
 /* =============== 2. Scene switching =============== */
 function switchScene(name) {
@@ -49,7 +59,6 @@ function switchScene(name) {
     el.classList.toggle("active", key === name);
   });
 
-  // Control which gaze dot is visible
   if (name === "wall") {
     gazeDot.style.display = "block";
     gazeDotLogs.style.display = "none";
@@ -90,7 +99,8 @@ function createWallGrid() {
 
     const inner = document.createElement("div");
     inner.className = "cam-window-inner";
-    inner.style.backgroundImage = "linear-gradient(135deg, #1e1e2f, #0d0f1a)";
+    inner.style.backgroundImage =
+      "linear-gradient(135deg, #1e1e2f, #0d0f1a)";
 
     const label = document.createElement("div");
     label.className = "cam-label";
@@ -123,13 +133,14 @@ function updateVoyeurScoreDisplay() {
   scoreVoyeur.textContent = state.voyeurScore.toFixed(0);
 }
 
-// Analyze fixation by type and update label
+/* =============== 4.1 Profile text from fixation stats =============== */
 function updateViewerLabelFromStats() {
   const totalsByType = {};
   let totalFix = 0;
 
   for (const w of state.wallWindows) {
-    totalsByType[w.type] = (totalsByType[w.type] || 0) + w.fixationTime;
+    totalsByType[w.type] =
+      (totalsByType[w.type] || 0) + w.fixationTime;
     totalFix += w.fixationTime;
   }
 
@@ -157,9 +168,8 @@ function updateViewerLabelFromStats() {
     profile = "Scanner (keeps jumping around)";
   }
 
-  labelViewer.textContent = `Profile: ${profile} (${dominantType}, ${(ratio * 100).toFixed(
-    1
-  )}% of gaze time)`;
+  labelViewer.textContent = `Profile: ${profile} (${dominantType}, ${(ratio *
+    100).toFixed(1)}% of gaze time)`;
 }
 
 /* =============== 5. Log console =============== */
@@ -189,17 +199,23 @@ function addLogLine(text, sensitive = false) {
 
 /* =============== 6. Report =============== */
 function generateReport() {
-  const totalFix = state.wallWindows.reduce((sum, w) => sum + w.fixationTime, 0);
+  const totalFix = state.wallWindows.reduce(
+    (sum, w) => sum + w.fixationTime,
+    0
+  );
   const bedroomFix = state.wallWindows
     .filter((w) => w.type === "BEDROOM")
     .reduce((sum, w) => sum + w.fixationTime, 0);
 
-  const bedroomRatio = totalFix > 0 ? (bedroomFix / totalFix) * 100 : 0;
+  const bedroomRatio =
+    totalFix > 0 ? (bedroomFix / totalFix) * 100 : 0;
 
   const text = `
     The system has recorded your gaze behavior during this session.<br><br>
     Although this early version only tracks basic fixation time, some tendencies are already visible:<br><br>
-    • Your total <b>Voyeur Tendency Score</b> is: <b>${state.voyeurScore.toFixed(0)}</b><br>
+    • Your total <b>Voyeur Tendency Score</b> is: <b>${state.voyeurScore.toFixed(
+      0
+    )}</b><br>
     • Approximately <b>${bedroomRatio.toFixed(
       1
     )}%</b> of your visual attention was spent on BEDROOM-type feeds.<br><br>
@@ -216,31 +232,31 @@ function initGaze() {
     return;
   }
 
-    webgazer
+  webgazer
     .setRegression("ridge")
     .setGazeListener((data, timestamp) => {
       if (!data) return;
       const x = data.x;
       const y = data.y;
 
-      // -------- 1) Blink / glitch filtering --------
+      // --- 1) Blink / glitch filtering ---
       if (state.lastRawGaze) {
         const dx = x - state.lastRawGaze.x;
         const dy = y - state.lastRawGaze.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // 如果这一帧和上一帧距离跳得特别大，认为是眨眼/噪声，直接忽略
+        // allow large moves, only drop super crazy jumps
         if (dist > 700) {
           return;
         }
       }
       state.lastRawGaze = { x, y };
 
-      // -------- 2) 窗口平滑：对若干帧取平均，给逻辑使用 --------
+      // --- 2) Smoothing window for logic ---
       const win = state.gazeSmoothingWindow;
       win.push({ x, y });
       if (win.length > 6) {
-        win.shift(); // keep only last 6 points
+        win.shift(); // keep last 6 samples
       }
 
       let sumX = 0;
@@ -252,23 +268,24 @@ function initGaze() {
       let avgX = sumX / win.length;
       let avgY = sumY / win.length;
 
-      // 简单的边界限制，防止点跑出屏幕
       const w = window.innerWidth;
       const h = window.innerHeight;
       avgX = Math.max(0, Math.min(w, avgX));
       avgY = Math.max(0, Math.min(h, avgY));
 
-      // 逻辑用的 gaze（highlight & profile）
       state.gazePosition = { x: avgX, y: avgY };
-      state.gazeHistory.push({ x: avgX, y: avgY, t: timestamp });
+      state.gazeHistory.push({
+        x: avgX,
+        y: avgY,
+        t: timestamp,
+      });
 
-      // -------- 3) 红点再做一层「缓动」：让视觉更稳定 --------
-      const alpha = 0.2; // 越小越平滑，0.2 ＝轻微延迟但还算灵敏
+      // --- 3) Extra smoothing just for dot display (visual) ---
+      const alpha = 0.25; // 0.25 = fairly responsive but still smoothed
       const dp = state.displayDotPos;
       dp.x = dp.x + alpha * (avgX - dp.x);
       dp.y = dp.y + alpha * (avgY - dp.y);
 
-      // 把缓动后的 displayDotPos 用来画红点
       if (state.currentScene === "wall") {
         gazeDot.style.left = dp.x + "px";
         gazeDot.style.top = dp.y + "px";
@@ -276,15 +293,29 @@ function initGaze() {
         gazeDotLogs.style.left = dp.x + "px";
         gazeDotLogs.style.top = dp.y + "px";
       }
+    })
+    .begin()
+    .then(() => {
+      if (webgazer.showVideo) webgazer.showVideo(false);
+      if (webgazer.showFaceOverlay)
+        webgazer.showFaceOverlay(false);
+      if (webgazer.showFaceFeedbackBox)
+        webgazer.showFaceFeedbackBox(false);
+      state.gazeEnabled = true;
+      console.log("[EYE] WebGazer started.");
+    })
+    .catch((err) => {
+      console.error("WebGazer failed:", err);
     });
 
-  // Update gaze-based fixation and highlighting more frequently (100ms)
-  setInterval(updateWallFixationsByGaze, 100);
+  // update gaze-based fixation and highlighting every 120ms
+  setInterval(updateWallFixationsByGaze, 120);
 }
 
+/* 命中判定：加 margin 让每个窗口更容易被看中 */
 function pointInElement(x, y, el) {
   const rect = el.getBoundingClientRect();
-  const margin = 80; // 放宽 80px 缓冲区，让锁定更容易
+  const margin = 80; // expand hit area by 80px around
 
   return (
     x >= rect.left - margin &&
@@ -298,7 +329,7 @@ function updateWallFixationsByGaze() {
   if (state.currentScene !== "wall" || !state.gazeEnabled) return;
 
   const { x, y } = state.gazePosition;
-  const dt = 0.1; // 100ms
+  const dt = 0.12; // must match interval ~120ms
 
   let hitWindow = null;
   for (const w of state.wallWindows) {
@@ -331,8 +362,14 @@ function updateWallFixationsByGaze() {
 function initSceneButtons() {
   btnToLogs.addEventListener("click", () => {
     switchScene("logs");
-    addLogLine("[SYSTEM] User moved to LOG CONSOLE.", false);
-    addLogLine("[TRACE] Approx. locale: UNKNOWN_CITY / UNKNOWN_REGION.", true);
+    addLogLine(
+      "[SYSTEM] User moved to LOG CONSOLE.",
+      false
+    );
+    addLogLine(
+      "[TRACE] Approx. locale: UNKNOWN_CITY / UNKNOWN_REGION.",
+      true
+    );
   });
 
   btnRestart.addEventListener("click", () => {
