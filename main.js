@@ -73,7 +73,6 @@
   }
 
   // ============================
-   // ============================
   // 3. Loading Screen Initialization
   // ============================
   function initLoadingScreen() {
