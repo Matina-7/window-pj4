@@ -1,4 +1,4 @@
-// main.js - WINDOW base version without IIFE (simpler)
+// main.js - WINDOW base version with smoothed eye tracking & visible gaze dot
 
 /* =============== 0. DOM references =============== */
 const scenes = {
@@ -34,6 +34,7 @@ const state = {
   gazeEnabled: false,
   gazePosition: { x: 0, y: 0 },
   gazeHistory: [],
+  gazeSmoothingWindow: [],   // for smoothing raw gaze positions
   lastFocusedWindow: null,
 };
 
@@ -46,6 +47,7 @@ function switchScene(name) {
     el.classList.toggle("active", key === name);
   });
 
+  // Control which gaze dot is visible
   if (name === "wall") {
     gazeDot.style.display = "block";
     gazeDotLogs.style.display = "none";
@@ -78,7 +80,7 @@ function initLoadingScreen() {
 
 /* =============== 4. CCTV wall =============== */
 function createWallGrid() {
-  const total = 9;
+  const total = 9; // 3x3 grid
   for (let i = 0; i < total; i++) {
     const type = WINDOW_TYPES[i % WINDOW_TYPES.length];
     const camEl = document.createElement("div");
@@ -153,14 +155,16 @@ function updateViewerLabelFromStats() {
     profile = "Scanner (keeps jumping around)";
   }
 
-  labelViewer.textContent = `Profile: ${profile} (${dominantType}, ${(ratio * 100).toFixed(1)}% of gaze time)`;
+  labelViewer.textContent = `Profile: ${profile} (${dominantType}, ${(ratio * 100).toFixed(
+    1
+  )}% of gaze time)`;
 }
 
 /* =============== 5. Log console =============== */
 function initLogsScene() {
   const baseLogs = [
     "[SYSTEM] WINDOW daemon started.",
-    "[CCTV] 12 remote channels connected.",
+    "[CCTV] 9 remote channels connected.",
     "[EYE] Tracking module online.",
     "[RISK] Baseline level: LOW.",
   ];
@@ -194,14 +198,16 @@ function generateReport() {
     The system has recorded your gaze behavior during this session.<br><br>
     Although this early version only tracks basic fixation time, some tendencies are already visible:<br><br>
     • Your total <b>Voyeur Tendency Score</b> is: <b>${state.voyeurScore.toFixed(0)}</b><br>
-    • Approximately <b>${bedroomRatio.toFixed(1)}%</b> of your visual attention was spent on BEDROOM-type feeds.<br><br>
+    • Approximately <b>${bedroomRatio.toFixed(
+      1
+    )}%</b> of your visual attention was spent on BEDROOM-type feeds.<br><br>
     Future versions will analyze more complex gaze behaviors to generate personalized anti-surveillance responses.
   `;
 
   reportTextEl.innerHTML = text;
 }
 
-/* =============== 7. Eye tracking =============== */
+/* =============== 7. Eye tracking (smoothed) =============== */
 function initGaze() {
   if (!window.webgazer) {
     console.warn("WebGazer not available.");
@@ -215,15 +221,32 @@ function initGaze() {
       const x = data.x;
       const y = data.y;
 
-      state.gazePosition = { x, y };
-      state.gazeHistory.push({ x, y, t: timestamp });
+      // --- smoothing: keep last N points and use their average ---
+      const win = state.gazeSmoothingWindow;
+      win.push({ x, y });
+      if (win.length > 6) {
+        win.shift(); // keep only last 6 points -> smoother but still responsive
+      }
 
+      let sumX = 0;
+      let sumY = 0;
+      for (const p of win) {
+        sumX += p.x;
+        sumY += p.y;
+      }
+      const avgX = sumX / win.length;
+      const avgY = sumY / win.length;
+
+      state.gazePosition = { x: avgX, y: avgY };
+      state.gazeHistory.push({ x: avgX, y: avgY, t: timestamp });
+
+      // Move visible gaze dot using smoothed position
       if (state.currentScene === "wall") {
-        gazeDot.style.left = x + "px";
-        gazeDot.style.top = y + "px";
+        gazeDot.style.left = avgX + "px";
+        gazeDot.style.top = avgY + "px";
       } else if (state.currentScene === "logs") {
-        gazeDotLogs.style.left = x + "px";
-        gazeDotLogs.style.top = y + "px";
+        gazeDotLogs.style.left = avgX + "px";
+        gazeDotLogs.style.top = avgY + "px";
       }
     })
     .begin()
@@ -238,7 +261,8 @@ function initGaze() {
       console.error("WebGazer failed:", err);
     });
 
-  setInterval(updateWallFixationsByGaze, 200);
+  // Update gaze-based fixation and highlighting more frequently (100ms)
+  setInterval(updateWallFixationsByGaze, 100);
 }
 
 function pointInElement(x, y, el) {
@@ -250,7 +274,7 @@ function updateWallFixationsByGaze() {
   if (state.currentScene !== "wall" || !state.gazeEnabled) return;
 
   const { x, y } = state.gazePosition;
-  const dt = 0.2;
+  const dt = 0.1; // 100ms
 
   let hitWindow = null;
   for (const w of state.wallWindows) {
