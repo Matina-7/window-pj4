@@ -107,10 +107,13 @@ body {
   background: radial-gradient(circle at top, #151824 0, #05060a 60%);
 }
 
-.cam-window {
-  position: relative;
-  background: #05060a;
-  border: 1px solid #272a35;
+/* Highlight effect for the window currently under gaze */
+.cam-window.focused {
+  outline: 2px solid #ef5350;
+  box-shadow: 0 0 8px rgba(239, 83, 80, 0.7);
+  z-index: 1;
+}
+
   overflow: hidden;
   cursor: pointer;
 }
