@@ -230,7 +230,7 @@ function initGaze() {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         // 如果这一帧和上一帧距离跳得特别大，认为是眨眼/噪声，直接忽略
-        if (dist > 300) {
+        if (dist > 700) {
           return;
         }
       }
@@ -284,7 +284,14 @@ function initGaze() {
 
 function pointInElement(x, y, el) {
   const rect = el.getBoundingClientRect();
-  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  const margin = 80; // 放宽 80px 缓冲区，让锁定更容易
+
+  return (
+    x >= rect.left - margin &&
+    x <= rect.right + margin &&
+    y >= rect.top - margin &&
+    y <= rect.bottom + margin
+  );
 }
 
 function updateWallFixationsByGaze() {
