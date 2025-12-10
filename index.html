@@ -1,13 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WINDOW - Anti-Surveillance System</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Typed.js for loading text -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.16"></script>
+
+  <!-- WebGazer.js for eye tracking -->
+  <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
 </head>
 <body>
-    <h1>Hello World</h1>
-    <script src="main.js"></script>
+  <!-- Scene 1: Loading Screen -->
+  <div id="scene-loading" class="scene active">
+    <div class="loading-center">
+      <div class="system-title">WINDOW // MONITOR SYSTEM</div>
+      <div id="loading-text" class="loading-text"></div>
+      <button id="btn-start" class="btn primary">Start Calibration</button>
+    </div>
+  </div>
+
+  <!-- Scene 2: CCTV Wall -->
+  <div id="scene-wall" class="scene">
+    <header class="top-bar">
+      <div class="logo">WINDOW / CCTV GRID</div>
+      <div class="status">
+        <span id="status-eye">EYE: INIT</span>
+        <span id="status-mode">MODE: IDLE</span>
+      </div>
+    </header>
+
+    <main class="wall-layout">
+      <section class="wall-grid" id="wall-grid">
+        <!-- Populated dynamically -->
+      </section>
+
+      <aside class="side-panel">
+        <div class="panel-block">
+          <h3>Current Observation Label</h3>
+          <div id="label-viewer" class="panel-text">Not determined</div>
+        </div>
+        <div class="panel-block">
+          <h3>Voyeur Tendency Score</h3>
+          <div id="score-voyeur" class="panel-text-large">0</div>
+        </div>
+        <div class="panel-block">
+          <button id="btn-to-logs" class="btn">Go to Log Console</button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Eye-tracking dot -->
+    <div id="gaze-dot"></div>
+  </div>
+
+  <!-- Scene 3: Log Console -->
+  <div id="scene-logs" class="scene">
+    <header class="top-bar">
+      <div class="logo">WINDOW / LOG CONSOLE</div>
+      <div class="status">
+        <span id="status-log-eye">EYE: TRACKING</span>
+        <span id="status-log-level">RISK: LOW</span>
+      </div>
+    </header>
+
+    <main class="logs-layout">
+      <section class="logs-panel">
+        <div id="log-lines" class="log-lines">
+          <!-- Logs added dynamically -->
+        </div>
+      </section>
+      <aside class="side-panel">
+        <div class="panel-block">
+          <h3>Gaze Sensitivity</h3>
+          <div id="log-sensitivity" class="panel-text">Waiting for data...</div>
+        </div>
+        <div class="panel-block">
+          <button id="btn-to-report" class="btn">Generate Report</button>
+        </div>
+      </aside>
+    </main>
+
+    <div id="gaze-dot-logs"></div>
+  </div>
+
+  <!-- Scene 4: Final Report -->
+  <div id="scene-report" class="scene">
+    <div class="report-center">
+      <h1>Behavioral Monitoring Report</h1>
+      <div id="report-text" class="report-text"></div>
+      <button id="btn-restart" class="btn">Restart Experience</button>
+    </div>
+  </div>
+
+  <!-- Calibration Overlay -->
+  <div id="calibration-overlay" class="calibration hidden">
+    <div class="calib-box">
+      <h2>Simple Calibration</h2>
+      <p>Look at the center of the screen and click “Start”.</p>
+      <button id="btn-calib-start" class="btn primary">Start</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
+
