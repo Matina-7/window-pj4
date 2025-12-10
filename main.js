@@ -386,3 +386,7 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+window.onload = () => {
+    initApp();
+};
+
