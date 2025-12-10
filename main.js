@@ -32,9 +32,11 @@ const state = {
   wallWindows: [], // {el, type, fixationTime}
   voyeurScore: 0,
   gazeEnabled: false,
-  gazePosition: { x: 0, y: 0 },
+  gazePosition: { x: 0, y: 0 },       // smoothed position used for逻辑
   gazeHistory: [],
-  gazeSmoothingWindow: [],   // for smoothing raw gaze positions
+  gazeSmoothingWindow: [],            // smoothing window for raw points
+  lastRawGaze: null,                  // last raw gaze point (for blink detection)
+  displayDotPos: { x: window.innerWidth / 2, y: window.innerHeight / 2 }, // red dot position
   lastFocusedWindow: null,
 };
 
@@ -214,18 +216,31 @@ function initGaze() {
     return;
   }
 
-  webgazer
+    webgazer
     .setRegression("ridge")
     .setGazeListener((data, timestamp) => {
       if (!data) return;
       const x = data.x;
       const y = data.y;
 
-      // --- smoothing: keep last N points and use their average ---
+      // -------- 1) Blink / glitch filtering --------
+      if (state.lastRawGaze) {
+        const dx = x - state.lastRawGaze.x;
+        const dy = y - state.lastRawGaze.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // 如果这一帧和上一帧距离跳得特别大，认为是眨眼/噪声，直接忽略
+        if (dist > 300) {
+          return;
+        }
+      }
+      state.lastRawGaze = { x, y };
+
+      // -------- 2) 窗口平滑：对若干帧取平均，给逻辑使用 --------
       const win = state.gazeSmoothingWindow;
       win.push({ x, y });
       if (win.length > 6) {
-        win.shift(); // keep only last 6 points -> smoother but still responsive
+        win.shift(); // keep only last 6 points
       }
 
       let sumX = 0;
@@ -234,31 +249,33 @@ function initGaze() {
         sumX += p.x;
         sumY += p.y;
       }
-      const avgX = sumX / win.length;
-      const avgY = sumY / win.length;
+      let avgX = sumX / win.length;
+      let avgY = sumY / win.length;
 
+      // 简单的边界限制，防止点跑出屏幕
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      avgX = Math.max(0, Math.min(w, avgX));
+      avgY = Math.max(0, Math.min(h, avgY));
+
+      // 逻辑用的 gaze（highlight & profile）
       state.gazePosition = { x: avgX, y: avgY };
       state.gazeHistory.push({ x: avgX, y: avgY, t: timestamp });
 
-      // Move visible gaze dot using smoothed position
+      // -------- 3) 红点再做一层「缓动」：让视觉更稳定 --------
+      const alpha = 0.2; // 越小越平滑，0.2 ＝轻微延迟但还算灵敏
+      const dp = state.displayDotPos;
+      dp.x = dp.x + alpha * (avgX - dp.x);
+      dp.y = dp.y + alpha * (avgY - dp.y);
+
+      // 把缓动后的 displayDotPos 用来画红点
       if (state.currentScene === "wall") {
-        gazeDot.style.left = avgX + "px";
-        gazeDot.style.top = avgY + "px";
+        gazeDot.style.left = dp.x + "px";
+        gazeDot.style.top = dp.y + "px";
       } else if (state.currentScene === "logs") {
-        gazeDotLogs.style.left = avgX + "px";
-        gazeDotLogs.style.top = avgY + "px";
+        gazeDotLogs.style.left = dp.x + "px";
+        gazeDotLogs.style.top = dp.y + "px";
       }
-    })
-    .begin()
-    .then(() => {
-      if (webgazer.showVideo) webgazer.showVideo(false);
-      if (webgazer.showFaceOverlay) webgazer.showFaceOverlay(false);
-      if (webgazer.showFaceFeedbackBox) webgazer.showFaceFeedbackBox(false);
-      state.gazeEnabled = true;
-      console.log("[EYE] WebGazer started.");
-    })
-    .catch((err) => {
-      console.error("WebGazer failed:", err);
     });
 
   // Update gaze-based fixation and highlighting more frequently (100ms)
