@@ -73,19 +73,15 @@
   }
 
   // ============================
+   // ============================
   // 3. Loading Screen Initialization
   // ============================
   function initLoadingScreen() {
-    new Typed('#loading-text', {
-      strings: [
-        'Initializing WINDOW system...',
-        'Connecting to remote CCTV grid...',
-        'Preparing eye-tracking module...',
-      ],
-      typeSpeed: 40,
-      backSpeed: 0,
-      loop: false,
-    });
+    // Simple static loading text (no external library)
+    loadingTextEl.innerHTML =
+      'Initializing WINDOW system...<br>' +
+      'Connecting to remote CCTV grid...<br>' +
+      'Preparing eye-tracking module...';
 
     btnStart.addEventListener('click', () => {
       calibrationOverlay.classList.remove('hidden');
