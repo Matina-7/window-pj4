@@ -38,6 +38,7 @@
     gazeEnabled: false,
     gazePosition: { x: 0, y: 0 },
     gazeHistory: [],
+    lastFocusedWindow: null,  // currently focused camera window
   };
 
   // Window types used to categorize gaze behavior
@@ -136,6 +137,44 @@
 
   function updateVoyeurScoreDisplay() {
     scoreVoyeur.textContent = state.voyeurScore.toFixed(0);
+  }
+  // Analyze fixation time by type and update the viewer label text
+  function updateViewerLabelFromStats() {
+    const totalsByType = {};
+    let totalFix = 0;
+
+    for (const w of state.wallWindows) {
+      totalsByType[w.type] = (totalsByType[w.type] || 0) + w.fixationTime;
+      totalFix += w.fixationTime;
+    }
+
+    if (totalFix < 1) {
+      labelViewer.textContent = 'Not enough gaze data yet';
+      return;
+    }
+
+    // Find the dominant type
+    let dominantType = null;
+    let dominantTime = 0;
+    for (const [type, t] of Object.entries(totalsByType)) {
+      if (t > dominantTime) {
+        dominantTime = t;
+        dominantType = type;
+      }
+    }
+
+    const ratio = dominantTime / totalFix;
+
+    let profile = 'Balanced Observer';
+    if (dominantType === 'BEDROOM' && ratio > 0.4) {
+      profile = 'Bedroom Watcher';
+    } else if (dominantType === 'CORRIDOR' && ratio > 0.4) {
+      profile = 'Door & Corridor Stalker';
+    } else if (ratio < 0.35) {
+      profile = 'Scanner (keeps jumping around)';
+    }
+
+    labelViewer.textContent = `Profile: ${profile} (${dominantType}, ${(ratio * 100).toFixed(1)}% of gaze time)`;
   }
 
   // ============================
@@ -237,7 +276,7 @@
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
   }
 
-  function updateWallFixationsByGaze() {
+    function updateWallFixationsByGaze() {
     if (state.currentScene !== 'wall' || !state.gazeEnabled) return;
 
     const { x, y } = state.gazePosition;
@@ -250,6 +289,27 @@
         break;
       }
     }
+
+    // Highlight the window currently under gaze
+    if (hitWindow !== state.lastFocusedWindow) {
+      if (state.lastFocusedWindow && state.lastFocusedWindow.el) {
+        state.lastFocusedWindow.el.classList.remove('focused');
+      }
+      if (hitWindow && hitWindow.el) {
+        hitWindow.el.classList.add('focused');
+      }
+      state.lastFocusedWindow = hitWindow;
+    }
+
+    if (hitWindow) {
+      hitWindow.fixationTime += dt;
+
+      state.voyeurScore += hitWindow.type === 'BEDROOM' ? 0.3 : 0.1;
+      updateVoyeurScoreDisplay();
+      updateViewerLabelFromStats();
+    }
+  }
+
 
     if (hitWindow) {
       hitWindow.fixationTime += dt;
