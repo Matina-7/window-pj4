@@ -202,7 +202,7 @@ function initLoadingScreen() {
 
 /* =============== 5. CCTV wall =============== */
 function createWallGrid() {
-  const total = 9; // 3x3 grid
+  const total = 6; // 3x3 grid
   for (let i = 0; i < total; i++) {
     const type = WINDOW_TYPES[i % WINDOW_TYPES.length];
     const camEl = document.createElement("div");
