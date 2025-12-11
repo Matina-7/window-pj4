@@ -774,3 +774,29 @@ button {
   mix-blend-mode: screen;
   pointer-events: none;
 }
+/* ===== DEBUG / 强化视觉效果，用来确认动画是否触发 ===== */
+
+/* 任何被系统判定为轻度注视的窗口（soft） */
+.cam-window-inner.cam-react-soft {
+  outline: 3px solid rgba(0, 255, 0, 0.9) !important;
+  box-shadow: 0 0 25px rgba(0, 255, 0, 0.9) !important;
+  filter: brightness(1.5) contrast(1.3) !important;
+}
+
+/* 任何被系统判定为长时间注视的窗口（strong） */
+.cam-window-inner.cam-react-strong {
+  outline: 3px solid rgba(255, 255, 0, 0.9) !important;
+  box-shadow: 0 0 32px rgba(255, 255, 0, 0.95) !important;
+  transform: scale(1.05) !important;
+}
+
+/* ghost 闪现：让整个窗口变成白色闪一下，很容易看到 */
+.cam-window-inner.cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  mix-blend-mode: screen;
+  opacity: 0.95;
+  pointer-events: none;
+}
