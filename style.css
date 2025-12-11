@@ -1,358 +1,222 @@
 /* ============================
    WINDOW / Anti-Surveillance UI
-   Full style.css
+   Clean + Stable + All FX Enabled
    ============================ */
 
-/* --- Base reset --- */
+/* ---------------------------------
+   RESET
+--------------------------------- */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Helvetica Neue", Arial, sans-serif;
-  background: radial-gradient(circle at top, #161824 0, #05060a 60%);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  background: radial-gradient(circle at top, #161824 0%, #05060a 60%);
   color: #e5e8ff;
   overflow: hidden;
 }
 
-/* --- Generic elements --- */
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font-family: inherit;
-  border: none;
-  outline: none;
-  background: none;
-}
-
-/* --- Scene visibility --- */
-
+/* ---------------------------------
+   SCENE VISIBILITY
+--------------------------------- */
 .scene {
   display: none;
 }
-
 .scene.active {
   display: block;
 }
 
-/* ============================
-   LOADING + CALIBRATION
-   ============================ */
-
+/* ---------------------------------
+   LOADING SCREEN
+--------------------------------- */
 #scene-loading {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   color: #c6caff;
-  background: radial-gradient(circle at top, #171927 0, #05060a 70%);
-}
-
-#loading-text {
-  font-size: 14px;
-  line-height: 1.6;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.88;
-  margin-bottom: 28px;
-  text-align: center;
 }
 
 #btn-start {
   padding: 10px 22px;
   border-radius: 999px;
   background: #ff5353;
-  color: #fff;
-  font-size: 13px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  color: white;
   cursor: pointer;
-  box-shadow: 0 0 12px rgba(255, 83, 83, 0.5);
-  transition: transform 0.12s ease, box-shadow 0.12s ease,
-    background 0.12s ease;
-}
-
-#btn-start:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 18px rgba(255, 83, 83, 0.8);
-  background: #ff6868;
-}
-
-/* --- Calibration overlay --- */
-
-#calibration-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(5, 6, 12, 0.92);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9000;
-}
-
-#calibration-overlay.hidden {
-  display: none;
-}
-
-.calib-box {
-  min-width: 260px;
-  max-width: 360px;
-  padding: 24px 26px 22px;
-  border-radius: 10px;
-  background: radial-gradient(circle at top, #20253a 0, #05060a 75%);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
-}
-
-.calib-box h2 {
-  font-size: 16px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #e9ecff;
-  margin-bottom: 10px;
-}
-
-.calib-box p {
-  font-size: 13px;
-  line-height: 1.6;
-  color: #a6a9c9;
-  margin-bottom: 16px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 18px;
+  margin-top: 16px;
   font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  border-radius: 999px;
-  cursor: pointer;
-  border: 1px solid rgba(228, 232, 255, 0.2);
-  color: #e5e8ff;
-  background: transparent;
-  transition: background 0.15s ease, color 0.15s ease,
-    box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  letter-spacing: 0.18em;
+  box-shadow: 0 0 12px rgba(255, 83, 83, 0.5);
 }
-
-.btn.primary {
-  background: #ff5353;
-  border-color: #ff5353;
-  color: #fff;
-  box-shadow: 0 0 12px rgba(255, 83, 83, 0.6);
-}
-
-.btn.primary:hover {
-  background: #ff6c6c;
-  border-color: #ff6c6c;
+#btn-start:hover {
+  background: #ff6b6b;
   transform: translateY(-1px);
 }
 
-.btn:hover:not(.primary) {
-  background: rgba(163, 174, 255, 0.12);
-  border-color: rgba(163, 174, 255, 0.5);
-}
-
-/* ============================
+/* ---------------------------------
    CCTV WALL LAYOUT
-   ============================ */
-
+--------------------------------- */
 #scene-wall {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #05060a;
 }
 
+/* TOP BAR */
 #scene-wall header {
-  height: 44px;
+  height: 46px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(80, 90, 120, 0.4);
+  background: linear-gradient(to right, #05060a, #10121e 60%, #05060a);
   color: #c7ccff;
-  border-bottom: 1px solid rgba(47, 52, 89, 0.9);
-  background: linear-gradient(to right, #05060a, #121424 60%, #05060a);
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  text-transform: uppercase;
 }
 
-#scene-wall header .title {
-  font-weight: 500;
-}
-
-#scene-wall header .status {
+/* MAIN LAYOUT */
+.wall-layout {
   display: flex;
-  gap: 16px;
-  font-size: 10px;
+  width: 100%;
+  height: calc(100vh - 46px);
+  overflow: hidden;
 }
 
-#scene-wall header .status span {
-  opacity: 0.7;
-}
-
-/* --- main layout: grid + side panel --- */
-
-#scene-wall main {
-  flex: 1;
-  display: flex;
-  min-height: 0;
-}
-
-/* Grid area */
-
+/* ---------------------------------
+   FIXED WALL GRID (6 CAMERAS)
+--------------------------------- */
 #wall-grid {
   flex: 3;
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns for 6 windows */
-  grid-auto-rows: 1fr;
-  gap: 6px;
-  padding: 8px;
-  background: radial-gradient(circle at top, #151824 0, #05060a 60%);
-  border-right: 1px solid #0a0c12;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  grid-template-rows: repeat(2, 1fr);    /* 2 rows = 6 windows */
+  gap: 10px;
+  padding: 14px;
+  background: radial-gradient(circle at top, #151824 0%, #05060a 65%);
+  border-right: 1px solid rgba(80, 90, 120, 0.2);
 }
 
-/* Side panel */
-
-.side-panel {
-  flex: 1.1;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 10px 10px 10px;
-  background: radial-gradient(circle at top right, #171a29 0, #05060a 75%);
-}
-
-/* Panel blocks in side bar */
-
-.panel-block {
-  border-radius: 8px;
-  border: 1px solid rgba(71, 78, 122, 0.9);
-  padding: 10px 11px;
-  margin-bottom: 10px;
-  background: linear-gradient(
-    145deg,
-    rgba(13, 15, 27, 0.9),
-    rgba(7, 9, 18, 0.95)
-  );
-  color: #dde1ff;
-}
-
-.panel-block h2 {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.panel-block .value-big {
-  font-size: 32px;
-  letter-spacing: 0.08em;
-  color: #ff5555;
-}
-
-.panel-block small {
-  display: block;
-  margin-top: 2px;
-  font-size: 10px;
-  opacity: 0.7;
-}
-
-/* Go to log button */
-
-.side-panel .panel-block:last-of-type {
-  margin-top: auto;
-}
-
-.side-panel .btn {
-  width: 100%;
-  text-align: center;
-}
-
-/* ============================
-   CCTV WINDOW BASICS
-   ============================ */
-
+/* ---------------------------------
+   CAMERA WINDOW BASE
+--------------------------------- */
 .cam-window {
   position: relative;
-  background: #05060a;
-  border: 1px solid #272a35;
+  background: #0a0c12;
+  border: 1px solid rgba(90, 95, 120, 0.45);
   overflow: hidden;
-  cursor: pointer;
-}
-
-.cam-window.focused {
-  border-color: #ff5353;
+  transition: 0.25s ease;
+  display: flex;
 }
 
 .cam-window-inner {
-  position: relative;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(0.4) contrast(1.1);
-  transition:
-    box-shadow 0.25s ease,
-    filter 0.25s ease,
-    transform 0.25s ease;
+  transition: 0.25s ease;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.18);
+  filter: grayscale(0.5) brightness(0.9);
 }
 
+/* CAMERA LABEL */
 .cam-label {
   position: absolute;
-  left: 4px;
-  bottom: 3px;
+  bottom: 6px;
+  left: 8px;
   font-size: 10px;
-  letter-spacing: 0.12em;
+  color: #cbd0ff;
+  opacity: 0.75;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #c4c9ff;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
 }
 
-.cam-rec {
+/* FOCUSED CAMERA */
+.cam-window.focused {
+  border-color: #ff5353;
+  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
+}
+
+.cam-window.focused .cam-window-inner {
+  filter: grayscale(0) brightness(1.2);
+}
+
+/* ---------------------------------
+   DEBUG VISUALIZATION (KEEP ENABLED)
+--------------------------------- */
+.cam-window-inner.cam-react-soft {
+  outline: 2px solid rgba(0,255,0,0.9) !important;
+  box-shadow: 0 0 22px rgba(0,255,0,0.7) !important;
+  filter: brightness(1.45) contrast(1.25) !important;
+}
+
+.cam-window-inner.cam-react-strong {
+  outline: 2px solid rgba(255,255,0,0.9) !important;
+  box-shadow: 0 0 26px rgba(255,255,0,0.9) !important;
+  transform: scale(1.04) !important;
+}
+
+.cam-window-inner.cam-ghost-flash::after {
+  content: "";
   position: absolute;
-  top: 3px;
-  right: 4px;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #ff5555;
-}
-
-/* Bottom-left global label text (active cam info) */
-
-#footer-label {
-  position: fixed;
-  left: 6px;
-  bottom: 4px;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #b7bcff;
-  opacity: 0.8;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  opacity: 0.9;
   pointer-events: none;
 }
 
-/* ============================
-   GAZE DOTS & HUD
-   ============================ */
+/* ---------------------------------
+   SIDE PANEL
+--------------------------------- */
+.side-panel {
+  flex: 1.15;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top right, #171a29, #05060a 70%);
+}
 
-#gaze-dot,
-#gaze-dot-logs {
+.panel-block {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(80, 90, 120, 0.5);
+  background: linear-gradient(145deg, #10131f, #06070d);
+}
+
+.panel-block h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 4px;
+  color: #d0d6ff;
+}
+
+.panel-text {
+  font-size: 12px;
+  opacity: 0.85;
+}
+.panel-text-large {
+  font-size: 30px;
+  color: #ff5555;
+}
+
+/* ---------------------------------
+   GAZE DOT
+--------------------------------- */
+#gaze-dot {
   position: fixed;
   width: 10px;
   height: 10px;
@@ -360,36 +224,33 @@ button {
   margin-top: -5px;
   border-radius: 50%;
   background: #ff4444;
-  box-shadow: 0 0 12px rgba(255, 70, 70, 0.9);
+  box-shadow: 0 0 12px rgba(255,70,70,0.8);
   pointer-events: none;
-  z-index: 8000;
-  display: none;
+  z-index: 5000;
+  display: block;
 }
 
-/* Eye stability HUD (bottom-right) */
-
-#eye-stability-hud {
-  /* created from JS, but add fallback style */
+/* ---------------------------------
+   LOG CONSOLE
+--------------------------------- */
+#scene-logs {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* override in JS; keep minimal style if JS not loaded */
-#eye-stability-hud {
-  position: fixed;
-  right: 18px;
-  bottom: 14px;
-  padding: 6px 10px;
-  font-family: monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: #a8b4ff;
-  background: rgba(5, 7, 12, 0.85);
-  border: 1px solid rgba(120, 130, 255, 0.35);
-  border-radius: 6px;
-  z-index: 9999;
-  pointer-events: none;
+/* ---------------------------------
+   FINAL REPORT
+--------------------------------- */
+#scene-report {
+  height: 100vh;
+  padding: 40px;
+  text-align: center;
 }
 
-/* Hide WebGazer video/canvas but keep them functional */
+/* ---------------------------------
+   HIDE WEBGAZER VIDEO FEED
+--------------------------------- */
 #webgazerVideoFeed,
 #webgazerFaceOverlay,
 #webgazerFaceFeedbackBox {
@@ -402,475 +263,3 @@ button {
   pointer-events: none !important;
   z-index: -1 !important;
 }
-
-/* ============================
-   LOG CONSOLE SCENE
-   ============================ */
-
-#scene-logs {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-#scene-logs header {
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #c7ccff;
-  border-bottom: 1px solid rgba(47, 52, 89, 0.9);
-  background: linear-gradient(to right, #05060a, #121424 60%, #05060a);
-}
-
-#scene-logs main {
-  flex: 1;
-  display: flex;
-}
-
-/* left: log list, right: controls (optional) */
-
-.log-panel {
-  flex: 3;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 10px 14px;
-  background: radial-gradient(circle at top, #141628 0, #05060a 70%);
-}
-
-#log-lines {
-  flex: 1;
-  border-radius: 8px;
-  border: 1px solid rgba(65, 72, 115, 0.9);
-  padding: 10px 12px;
-  background: rgba(7, 8, 16, 0.95);
-  font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 11px;
-  line-height: 1.6;
-  color: #c7cdfd;
-  overflow-y: auto;
-}
-
-.log-line {
-  white-space: pre-wrap;
-}
-
-.log-line + .log-line {
-  margin-top: 4px;
-}
-
-.log-line.sensitive {
-  color: #ffbfbf;
-}
-
-/* optional right column for buttons */
-
-.log-side {
-  flex: 1.1;
-  padding: 10px 10px 14px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ============================
-   FINAL REPORT SCENE
-   ============================ */
-
-#scene-report {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: radial-gradient(circle at top, #171a29 0, #05060a 70%);
-  color: #dde0ff;
-}
-
-#scene-report header {
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #c7ccff;
-  border-bottom: 1px solid rgba(47, 52, 89, 0.9);
-}
-
-.report-center {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-#report-text {
-  max-width: 640px;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #c7cae9;
-}
-
-#report-text b {
-  color: #ff8080;
-}
-
-/* ============================
-   SIX-CAMERA REACTION FX
-   (per-camera gaze reactions)
-   ============================ */
-
-/* PRIVATE_SUITE (CAM_01) */
-
-@keyframes suiteGlow {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 190, 150, 0.15);
-  }
-  100% {
-    box-shadow: 0 0 22px rgba(255, 210, 170, 0.55);
-  }
-}
-
-.cam-window-inner[data-cam-type="PRIVATE_SUITE"].cam-react-soft {
-  animation: suiteGlow 1.6s ease-in-out infinite alternate;
-  filter: brightness(1.08) contrast(1.05);
-}
-
-.cam-window-inner[data-cam-type="PRIVATE_SUITE"].cam-react-strong {
-  animation: suiteGlow 1s ease-in-out infinite alternate;
-  filter: brightness(1.15) contrast(1.1) saturate(1.1);
-  transform: scale(1.02);
-}
-
-.cam-window-inner[data-cam-type="PRIVATE_SUITE"].cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-      circle at 30% 20%,
-      rgba(255, 255, 255, 0.45),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(255, 200, 180, 0.35),
-      transparent 65%
-    );
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-/* SERVICE_CORRIDOR (CAM_02) */
-
-@keyframes corridorNoise {
-  0% {
-    filter: brightness(0.95) contrast(1.1);
-  }
-  50% {
-    filter: brightness(1.02) contrast(1.2);
-  }
-  100% {
-    filter: brightness(0.9) contrast(1.15);
-  }
-}
-
-.cam-window-inner[data-cam-type="SERVICE_CORRIDOR"].cam-react-soft {
-  animation: corridorNoise 1.2s steps(3, end) infinite;
-}
-
-.cam-window-inner[data-cam-type="SERVICE_CORRIDOR"].cam-react-strong {
-  animation: corridorNoise 0.8s steps(4, end) infinite;
-  box-shadow: 0 0 20px rgba(180, 220, 255, 0.4);
-}
-
-@keyframes corridorSweep {
-  from {
-    transform: translateX(-40%);
-  }
-  to {
-    transform: translateX(40%);
-  }
-}
-
-.cam-window-inner[data-cam-type="SERVICE_CORRIDOR"].cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.7) 45%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  transform: translateX(-30%);
-  animation: corridorSweep 0.22s linear forwards;
-  pointer-events: none;
-}
-
-/* STAIRWELL_C2 (CAM_03) */
-
-@keyframes stairFlicker {
-  0%,
-  18%,
-  22%,
-  100% {
-    filter: brightness(0.9);
-  }
-  19%,
-  21% {
-    filter: brightness(1.3);
-  }
-}
-
-.cam-window-inner[data-cam-type="STAIRWELL_C2"].cam-react-soft {
-  animation: stairFlicker 2s infinite;
-}
-
-.cam-window-inner[data-cam-type="STAIRWELL_C2"].cam-react-strong {
-  animation: stairFlicker 1.3s infinite;
-  box-shadow: 0 0 24px rgba(220, 220, 255, 0.5);
-}
-
-.cam-window-inner[data-cam-type="STAIRWELL_C2"].cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 40% 60%,
-    rgba(0, 0, 0, 0.7),
-    transparent 55%
-  );
-  opacity: 0.85;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-/* REAR_ENTRANCE (CAM_04) */
-
-@keyframes rearWind {
-  0% {
-    transform: translateX(0);
-    filter: brightness(0.96);
-  }
-  50% {
-    transform: translateX(-1px);
-    filter: brightness(1.02);
-  }
-  100% {
-    transform: translateX(0);
-    filter: brightness(0.94);
-  }
-}
-
-.cam-window-inner[data-cam-type="REAR_ENTRANCE"].cam-react-soft {
-  animation: rearWind 1.8s ease-in-out infinite;
-}
-
-.cam-window-inner[data-cam-type="REAR_ENTRANCE"].cam-react-strong {
-  animation: rearWind 1.1s ease-in-out infinite;
-  box-shadow: 0 0 20px rgba(255, 200, 120, 0.45);
-}
-
-.cam-window-inner[data-cam-type="REAR_ENTRANCE"].cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(255, 255, 255, 0.8) 48%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  opacity: 0.9;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-/* PARKING_LOT_A (CAM_05) */
-
-@keyframes parkingScan {
-  0% {
-    box-shadow: 0 0 6px rgba(0, 255, 200, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 18px rgba(0, 255, 200, 0.35);
-  }
-  100% {
-    box-shadow: 0 0 8px rgba(0, 255, 200, 0.18);
-  }
-}
-
-.cam-window-inner[data-cam-type="PARKING_LOT_A"].cam-react-soft {
-  animation: parkingScan 1.8s ease-in-out infinite;
-  filter: contrast(1.05) saturate(0.98);
-}
-
-.cam-window-inner[data-cam-type="PARKING_LOT_A"].cam-react-strong {
-  animation: parkingScan 1.1s ease-in-out infinite;
-  filter: contrast(1.15) saturate(1.05);
-}
-
-.cam-window-inner[data-cam-type="PARKING_LOT_A"].cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-      circle at 20% 40%,
-      rgba(200, 255, 255, 0.8),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at 80% 50%,
-      rgba(200, 255, 255, 0.7),
-      transparent 55%
-    );
-  opacity: 0.9;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-/* OFFICE_DESK_03 (CAM_06) */
-
-@keyframes monitorPulse {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.15);
-  }
-  100% {
-    filter: brightness(1);
-  }
-}
-
-.cam-window-inner[data-cam-type="OFFICE_DESK_03"].cam-react-soft {
-  animation: monitorPulse 1.7s ease-in-out infinite;
-}
-
-.cam-window-inner[data-cam-type="OFFICE_DESK_03"].cam-react-strong {
-  animation: monitorPulse 1.1s ease-in-out infinite;
-  box-shadow: 0 0 18px rgba(130, 200, 255, 0.45);
-}
-
-.cam-window-inner[data-cam-type="OFFICE_DESK_03"].cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 50% 35%,
-    rgba(255, 255, 255, 0.55),
-    transparent 55%
-  );
-  opacity: 0.9;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-/* ===== DEBUG / 强化视觉效果，用来确认动画是否触发 ===== */
-
-/* 任何被系统判定为轻度注视的窗口（soft） */
-.cam-window-inner.cam-react-soft {
-  outline: 3px solid rgba(0, 255, 0, 0.9) !important;
-  box-shadow: 0 0 25px rgba(0, 255, 0, 0.9) !important;
-  filter: brightness(1.5) contrast(1.3) !important;
-}
-
-/* 任何被系统判定为长时间注视的窗口（strong） */
-.cam-window-inner.cam-react-strong {
-  outline: 3px solid rgba(255, 255, 0, 0.9) !important;
-  box-shadow: 0 0 32px rgba(255, 255, 0, 0.95) !important;
-  transform: scale(1.05) !important;
-}
-
-/* ghost 闪现：让整个窗口变成白色闪一下，很容易看到 */
-.cam-window-inner.cam-ghost-flash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.85);
-  mix-blend-mode: screen;
-  opacity: 0.95;
-  pointer-events: none;
-}
-/* ================================
-   WALL GRID (6 CAMERAS)
-================================ */
-.wall-layout {
-  display: flex;
-  width: 100%;
-  height: calc(100vh - 60px);
-}
-
-.wall-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);  /* 左边 3 列 */
-  grid-template-rows: repeat(2, 1fr);     /* 上下 2 行 */
-  gap: 12px;
-  padding: 20px;
-}
-
-.cam-window {
-  position: relative;
-  background: #05060a;
-  border: 1px solid #1a1a1a;
-  overflow: hidden;
-  transition: 0.25s ease;
-}
-
-.cam-window-inner {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(0.3) brightness(0.9);
-  transition: 0.25s ease;
-}
-
-.cam-label {
-  position: absolute;
-  bottom: 6px;
-  left: 6px;
-  font-size: 11px;
-  color: #8899ff;
-  opacity: 0.75;
-}
-
-.cam-window.focused {
-  border-color: #ff5353;
-  box-shadow: 0 0 8px rgba(255, 80, 80, 0.6);
-}
-
-.cam-window.focused .cam-window-inner {
-  filter: grayscale(0) brightness(1.2);
-}
-/* FORCE SHOW CAMERA WINDOWS */
-.cam-window {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  position: relative;
-}
-
-.cam-window-inner {
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px dashed rgba(255, 255, 255, 0.3) !important;
-}
-
-.cam-label {
-  position: absolute;
-  bottom: 6px;
-  left: 6px;
-  color: white;
-  font-size: 12px;
-}
-
