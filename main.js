@@ -1,111 +1,80 @@
-// =====================================================
-//   WINDOW PROJECT — Full main.js (Stable WebGazer Version)
-// =====================================================
-
 (() => {
-  console.log("%c[WINDOW] System initializing…", "color:#6cf");
 
-  // =====================================================
-  //  GLOBAL STATE
-  // =====================================================
+  console.log("[WINDOW] System initializing...");
+
   const state = {
     currentScene: "loading",
     gazeEnabled: false,
-    gazeStability: 0,
     smoothedX: null,
     smoothedY: null,
-    currentCam: null,
     voyeurScore: 0,
-    logs: [],
+    lastCam: null,
+    gazeTicks: 0
   };
 
-  // =====================================================
-  //  DOM REFERENCES
-  // =====================================================
   const scenes = {
     loading: document.getElementById("scene-loading"),
     wall: document.getElementById("scene-wall"),
-    logs: document.getElementById("scene-logs"),
-    report: document.getElementById("scene-report"),
+    logs: document.getElementById("scene-logs")
   };
 
   const btnStart = document.getElementById("btn-start");
-  const btnToLogs = document.getElementById("btn-to-logs");
-  const btnToReport = document.getElementById("btn-to-report");
   const btnRestart = document.getElementById("btn-restart");
 
+  const wallGrid = document.getElementById("wall-grid");
+  const gazeDot = document.getElementById("gaze-dot");
   const labelViewer = document.getElementById("label-viewer");
   const scoreVoyeur = document.getElementById("score-voyeur");
-  const gazeDot = document.getElementById("gaze-dot");
 
-  const logLines = document.getElementById("log-lines");
-  const reportText = document.getElementById("report-text");
-
-  const wallGrid = document.getElementById("wall-grid");
-
-  // =====================================================
-  //  SCENE SWITCHING
-  // =====================================================
-  function goToScene(name) {
-    Object.values(scenes).forEach((s) => s && s.classList.remove("active"));
-
-    const target = scenes[name];
-    if (target) target.classList.add("active");
-
-    state.currentScene = name;
+  // ----------------------------
+  // Scene switching
+  // ----------------------------
+  function goTo(name) {
+    Object.values(scenes).forEach(s => s.classList.remove("active"));
+    scenes[name].classList.add("active");
     console.log("[UI] Switched to:", name);
   }
 
-  // =====================================================
-  //  CREATE WALL GRID (6 CAMERAS)
-  // =====================================================
-  const ROOM_LABELS = ["BEDROOM", "KITCHEN", "STAIRCASE", "GARAGE", "HALLWAY", "STORAGE"];
+  // ----------------------------
+  // Create 6 CCTV windows
+  // ----------------------------
+  const LABELS = ["BEDROOM", "KITCHEN", "STAIRCASE", "GARAGE", "HALLWAY", "STORAGE"];
 
   function createWallGrid() {
-    if (!wallGrid) return;
-
     wallGrid.innerHTML = "";
-    const total = 6;
+    for (let i = 0; i < 6; i++) {
+      const box = document.createElement("div");
+      box.className = "cam-window";
+      box.dataset.label = LABELS[i];
 
-    for (let i = 0; i < total; i++) {
-      const cam = document.createElement("div");
-      cam.className = "cam-window";
-      cam.dataset.index = i;
-      cam.dataset.label = ROOM_LABELS[i];
-
-      const inner = document.createElement("div");
-      inner.className = "cam-window-inner";
-
-      inner.innerHTML = `
-        <span class="cam-label">${ROOM_LABELS[i]} // CAM_0${i + 1}</span>
+      box.innerHTML = `
+        <div class="cam-window-inner">
+          <span class="cam-label">${LABELS[i]} // CAM_0${i+1}</span>
+        </div>
       `;
 
-      cam.appendChild(inner);
-      wallGrid.appendChild(cam);
+      wallGrid.appendChild(box);
     }
   }
 
-  // =====================================================
-  //  GAZE SMOOTHING
-  // =====================================================
+  // ----------------------------
+  // Gaze smoothing
+  // ----------------------------
   const SMOOTH = 0.25;
-
   function smooth(x, y) {
-    if (state.smoothedX === null) {
+    if (state.smoothedX == null) {
       state.smoothedX = x;
       state.smoothedY = y;
-      return { x, y };
+    } else {
+      state.smoothedX += (x - state.smoothedX) * SMOOTH;
+      state.smoothedY += (y - state.smoothedY) * SMOOTH;
     }
-
-    state.smoothedX += (x - state.smoothedX) * SMOOTH;
-    state.smoothedY += (y - state.smoothedY) * SMOOTH;
-
     return { x: state.smoothedX, y: state.smoothedY };
   }
 
-  // =====================================================
-  //  GAZE LISTENER
-  // =====================================================
+  // ----------------------------
+  // Gaze listener
+  // ----------------------------
   function onGaze(pred) {
     if (!pred || !state.gazeEnabled) return;
 
@@ -119,116 +88,68 @@
     if (cam) highlight(cam);
   }
 
-  // =====================================================
-  //  HIGHLIGHT CAM
-  // =====================================================
-  let lastCam = null;
-  let gazeTicks = 0;
-
   function highlight(cam) {
-    if (lastCam !== cam) {
-      document.querySelectorAll(".cam-window").forEach((c) => c.classList.remove("focused"));
+    if (state.lastCam !== cam) {
+      document.querySelectorAll(".cam-window").forEach(c => c.classList.remove("focused"));
       cam.classList.add("focused");
 
-      lastCam = cam;
-      gazeTicks = 0;
+      labelViewer.textContent = cam.dataset.label;
 
-      labelViewer.innerText = cam.dataset.label;
+      state.lastCam = cam;
+      state.gazeTicks = 0;
     }
 
-    gazeTicks++;
-    if (gazeTicks % 60 === 0) {
+    state.gazeTicks++;
+    if (state.gazeTicks % 50 === 0) {
       state.voyeurScore++;
-      scoreVoyeur.innerText = state.voyeurScore;
+      scoreVoyeur.textContent = state.voyeurScore;
     }
   }
 
-  // =====================================================
-  //  START EYE TRACKING
-  // =====================================================
+  // ----------------------------
+  // Start Eye Tracking
+  // ----------------------------
   async function startEyeTracking() {
-    console.log("[EYE] Starting WebGazer…");
+    console.log("[EYE] Starting WebGazer...");
+
+    // Fix for 0x0 webcam bug
+    const v = document.getElementById("webgazerVideoFeed");
+    if (v) {
+      v.width = 320;
+      v.height = 240;
+    }
 
     try {
       await webgazer.setRegression("ridge");
       await webgazer.setTracker("clmtrackr");
       webgazer.setGazeListener(onGaze);
-
       await webgazer.begin();
 
       state.gazeEnabled = true;
-      console.log("[EYE] WebGazer ready.");
-    } catch (err) {
-      console.error("[EYE] Error but continue:", err);
+      gazeDot.style.display = "block";
+
+      console.log("[EYE] Ready.");
+    } catch (e) {
+      console.error("[EYE] Error:", e);
     }
   }
 
-  // =====================================================
-  //  START BUTTON
-  // =====================================================
-  function initLoadingScreen() {
-    if (!btnStart) return;
+  // ----------------------------
+  // INIT
+  // ----------------------------
+  function init() {
+    createWallGrid();
 
     btnStart.addEventListener("click", async () => {
-      console.log("[UI] Start Calibration clicked.");
-
-      try {
-        await startEyeTracking();
-      } catch (err) {
-        console.error("[EYE] Failed:", err);
-      } finally {
-        goToScene("wall"); // ALWAYS GO TO WALL
-      }
+      console.log("[UI] Start clicked");
+      goTo("wall");
+      await startEyeTracking();
     });
-  }
-
-  // =====================================================
-  //  LOG SCREEN
-  // =====================================================
-  function initLogs() {
-    if (!btnToLogs) return;
-
-    btnToLogs.addEventListener("click", () => {
-      logLines.innerHTML = state.logs.join("<br>");
-      goToScene("logs");
-    });
-  }
-
-  // =====================================================
-  //  REPORT SCREEN
-  // =====================================================
-  function initReport() {
-    if (btnToReport) {
-      btnToReport.addEventListener("click", () => {
-        reportText.innerHTML = `
-          <h3>Behavior Summary</h3>
-          <p>Most Watched: <b>${labelViewer.innerText}</b></p>
-          <p>Voyeur Score: <b>${state.voyeurScore}</b></p>
-        `;
-        goToScene("report");
-      });
-    }
 
     if (btnRestart) {
-      btnRestart.addEventListener("click", () => {
-        location.reload();
-      });
+      btnRestart.addEventListener("click", () => location.reload());
     }
-  }
-
-  // =====================================================
-  //  INIT
-  // =====================================================
-  function init() {
-    console.log("[SYS] INIT");
-
-    goToScene("loading");
-    createWallGrid();
-    initLoadingScreen();
-    initLogs();
-    initReport();
   }
 
   document.addEventListener("DOMContentLoaded", init);
-
-})(); // <— THIS WAS MISSING IN YOUR FILE
+})();
