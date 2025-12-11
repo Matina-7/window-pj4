@@ -293,3 +293,207 @@ body {
   margin-bottom: 12px;
 }
 
+/* ===================== */
+/*  SIX CAM REACTION FX  */
+/* ===================== */
+
+/* 通用过渡，所有摄像头的 inner 都有平滑过渡 */
+.cam-window-inner {
+  transition:
+    box-shadow 0.25s ease,
+    filter 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* ---------- CAM_01: PRIVATE_SUITE（卧室） ---------- */
+
+@keyframes suiteGlow {
+  0% { box-shadow: 0 0 10px rgba(255, 190, 150, 0.15); }
+  100% { box-shadow: 0 0 22px rgba(255, 210, 170, 0.55); }
+}
+
+.cam-window-inner[data-cam-type="PRIVATE_SUITE"].cam-react-soft {
+  animation: suiteGlow 1.6s ease-in-out infinite alternate;
+  filter: brightness(1.08) contrast(1.05);
+}
+
+.cam-window-inner[data-cam-type="PRIVATE_SUITE"].cam-react-strong {
+  animation: suiteGlow 1s ease-in-out infinite alternate;
+  filter: brightness(1.15) contrast(1.1) saturate(1.1);
+  transform: scale(1.02);
+}
+
+/* ghost：房间里突然变亮像有人出现 */
+.cam-window-inner[data-cam-type="PRIVATE_SUITE"].cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.45), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(255,200,180,0.35), transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* ---------- CAM_02: SERVICE_CORRIDOR（服务通道） ---------- */
+
+@keyframes corridorNoise {
+  0% { filter: brightness(0.95) contrast(1.1); }
+  50% { filter: brightness(1.02) contrast(1.2); }
+  100% { filter: brightness(0.9) contrast(1.15); }
+}
+
+.cam-window-inner[data-cam-type="SERVICE_CORRIDOR"].cam-react-soft {
+  animation: corridorNoise 1.2s steps(3, end) infinite;
+}
+
+.cam-window-inner[data-cam-type="SERVICE_CORRIDOR"].cam-react-strong {
+  animation: corridorNoise 0.8s steps(4, end) infinite;
+  box-shadow: 0 0 20px rgba(180, 220, 255, 0.4);
+}
+
+/* ghost：走廊上像被手电扫过一圈 */
+.cam-window-inner[data-cam-type="SERVICE_CORRIDOR"].cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.7) 45%,
+    rgba(255,255,255,0) 100%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  transform: translateX(-30%);
+  animation: corridorSweep 0.22s linear forwards;
+  pointer-events: none;
+}
+
+@keyframes corridorSweep {
+  from { transform: translateX(-40%); }
+  to   { transform: translateX(40%); }
+}
+
+/* ---------- CAM_03: STAIRWELL_C2（楼梯间） ---------- */
+
+@keyframes stairFlicker {
+  0%, 18%, 22%, 100% { filter: brightness(0.9); }
+  19%, 21% { filter: brightness(1.3); }
+}
+
+.cam-window-inner[data-cam-type="STAIRWELL_C2"].cam-react-soft {
+  animation: stairFlicker 2s infinite;
+}
+
+.cam-window-inner[data-cam-type="STAIRWELL_C2"].cam-react-strong {
+  animation: stairFlicker 1.3s infinite;
+  box-shadow: 0 0 24px rgba(220, 220, 255, 0.5);
+}
+
+/* ghost：楼梯间出现淡淡的人形剪影 */
+.cam-window-inner[data-cam-type="STAIRWELL_C2"].cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 40% 60%, rgba(0,0,0,0.7), transparent 55%);
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* ---------- CAM_04: REAR_ENTRANCE（后门） ---------- */
+
+@keyframes rearWind {
+  0% { transform: translateX(0); filter: brightness(0.96); }
+  50% { transform: translateX(-1px); filter: brightness(1.02); }
+  100% { transform: translateX(0); filter: brightness(0.94); }
+}
+
+.cam-window-inner[data-cam-type="REAR_ENTRANCE"].cam-react-soft {
+  animation: rearWind 1.8s ease-in-out infinite;
+}
+
+.cam-window-inner[data-cam-type="REAR_ENTRANCE"].cam-react-strong {
+  animation: rearWind 1.1s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(255, 200, 120, 0.45);
+}
+
+/* ghost：门缝突然大亮，像有人在门后 */
+.cam-window-inner[data-cam-type="REAR_ENTRANCE"].cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      rgba(0,0,0,0.0) 0%,
+      rgba(255,255,255,0.8) 48%,
+      rgba(0,0,0,0.0) 100%
+    );
+  opacity: 0.9;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* ---------- CAM_05: PARKING_LOT_A（停车场） ---------- */
+
+@keyframes parkingScan {
+  0% { box-shadow: 0 0 6px rgba(0,255,200,0.1); }
+  50% { box-shadow: 0 0 18px rgba(0,255,200,0.35); }
+  100% { box-shadow: 0 0 8px rgba(0,255,200,0.18); }
+}
+
+.cam-window-inner[data-cam-type="PARKING_LOT_A"].cam-react-soft {
+  animation: parkingScan 1.8s ease-in-out infinite;
+  filter: contrast(1.05) saturate(0.98);
+}
+
+.cam-window-inner[data-cam-type="PARKING_LOT_A"].cam-react-strong {
+  animation: parkingScan 1.1s ease-in-out infinite;
+  filter: contrast(1.15) saturate(1.05);
+}
+
+/* ghost：远处车灯闪一下 */
+.cam-window-inner[data-cam-type="PARKING_LOT_A"].cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 40%, rgba(200,255,255,0.8), transparent 55%),
+    radial-gradient(circle at 80% 50%, rgba(200,255,255,0.7), transparent 55%);
+  opacity: 0.9;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* ---------- CAM_06: OFFICE_DESK_03（办公桌） ---------- */
+
+@keyframes monitorPulse {
+  0% { filter: brightness(1.0); }
+  50% { filter: brightness(1.15); }
+  100% { filter: brightness(1.0); }
+}
+
+.cam-window-inner[data-cam-type="OFFICE_DESK_03"].cam-react-soft {
+  animation: monitorPulse 1.7s ease-in-out infinite;
+}
+
+.cam-window-inner[data-cam-type="OFFICE_DESK_03"].cam-react-strong {
+  animation: monitorPulse 1.1s ease-in-out infinite;
+  box-shadow: 0 0 18px rgba(130,200,255,0.45);
+}
+
+/* ghost：屏幕像反射出观察者的脸部光 */
+.cam-window-inner[data-cam-type="OFFICE_DESK_03"].cam-ghost-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255,255,255,0.55), transparent 55%);
+  opacity: 0.9;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
