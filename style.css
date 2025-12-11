@@ -263,3 +263,36 @@ body {
   pointer-events: none !important;
   z-index: -1 !important;
 }
+/* ================================
+   FIX: Force wall scene to show
+================================ */
+
+#scene-wall {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+}
+
+.wall-layout {
+  display: flex !important;
+  flex: 1 !important;
+  height: 100% !important;
+}
+
+/* VERY IMPORTANT: restore wall-grid height */
+#wall-grid {
+  flex: 3 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  grid-template-rows: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  padding: 20px !important;
+  min-height: 300px !important; /* 防止被压扁 */
+  height: 100% !important;
+}
+
+/* camera window must have size */
+.cam-window,
+.cam-window-inner {
+  min-height: 150px !important;
+}
