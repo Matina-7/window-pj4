@@ -1,11 +1,8 @@
 /* ============================
-   WINDOW / Anti-Surveillance UI
-   Clean + Stable + All FX Enabled
-   ============================ */
+   WINDOW UI — Clean + Stable
+============================ */
 
-/* ---------------------------------
-   RESET
---------------------------------- */
+/* RESET */
 *,
 *::before,
 *::after {
@@ -20,202 +17,138 @@ html, body {
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  background: radial-gradient(circle at top, #161824 0%, #05060a 60%);
+  background: radial-gradient(circle at top, #161824, #05060a 60%);
   color: #e5e8ff;
   overflow: hidden;
 }
 
-/* ---------------------------------
-   SCENE VISIBILITY
---------------------------------- */
-.scene {
-  display: none;
-}
-.scene.active {
-  display: block;
-}
+/* SCENES */
+.scene { display: none; }
+.scene.active { display: block; }
 
-/* ---------------------------------
-   LOADING SCREEN
---------------------------------- */
+/* ============================
+   LOADING SCENE
+============================ */
 #scene-loading {
   height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #c6caff;
+  flex-direction: column;
 }
 
 #btn-start {
   padding: 10px 22px;
+  margin-top: 20px;
   border-radius: 999px;
   background: #ff5353;
   color: white;
   cursor: pointer;
-  margin-top: 16px;
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  box-shadow: 0 0 12px rgba(255, 83, 83, 0.5);
-}
-#btn-start:hover {
-  background: #ff6b6b;
-  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(255,80,80,0.6);
 }
 
-/* ---------------------------------
-   CCTV WALL LAYOUT
---------------------------------- */
+/* ============================
+   WALL SCENE
+============================ */
 #scene-wall {
-  height: 100vh;
-  display: flex;
+  display: flex !important;
   flex-direction: column;
-  background: #05060a;
+  height: 100vh !important;
 }
 
-/* TOP BAR */
+/* header */
 #scene-wall header {
   height: 46px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
-  border-bottom: 1px solid rgba(80, 90, 120, 0.4);
-  background: linear-gradient(to right, #05060a, #10121e 60%, #05060a);
-  color: #c7ccff;
-  letter-spacing: 0.18em;
+  background: linear-gradient(to right, #05060a, #10121e);
+  border-bottom: 1px solid rgba(80,90,120,0.4);
   font-size: 11px;
   text-transform: uppercase;
+  letter-spacing: 0.18em;
 }
 
-/* MAIN LAYOUT */
+/* layout */
 .wall-layout {
+  flex: 1;
   display: flex;
-  width: 100%;
   height: calc(100vh - 46px);
-  overflow: hidden;
 }
 
-/* ---------------------------------
-   FIXED WALL GRID (6 CAMERAS)
---------------------------------- */
+/* grid */
 #wall-grid {
   flex: 3;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  grid-template-rows: repeat(2, 1fr);    /* 2 rows = 6 windows */
-  gap: 10px;
-  padding: 14px;
-  background: radial-gradient(circle at top, #151824 0%, #05060a 65%);
-  border-right: 1px solid rgba(80, 90, 120, 0.2);
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: radial-gradient(circle at top, #151824, #05060a 60%);
+  border-right: 1px solid rgba(80,90,120,0.2);
 }
 
-/* ---------------------------------
-   CAMERA WINDOW BASE
---------------------------------- */
+/* camera window */
 .cam-window {
-  position: relative;
   background: #0a0c12;
-  border: 1px solid rgba(90, 95, 120, 0.45);
+  border: 1px solid rgba(90,95,120,0.45);
+  position: relative;
+  min-height: 160px;
   overflow: hidden;
-  transition: 0.25s ease;
-  display: flex;
 }
 
 .cam-window-inner {
   width: 100%;
   height: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px dashed rgba(255,255,255,0.25);
+  filter: grayscale(0.4);
   transition: 0.25s ease;
-  background: rgba(255,255,255,0.03);
-  border: 1px dashed rgba(255,255,255,0.18);
-  filter: grayscale(0.5) brightness(0.9);
 }
 
-/* CAMERA LABEL */
-.cam-label {
-  position: absolute;
-  bottom: 6px;
-  left: 8px;
-  font-size: 10px;
-  color: #cbd0ff;
-  opacity: 0.75;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-
-/* FOCUSED CAMERA */
 .cam-window.focused {
-  border-color: #ff5353;
-  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
+  border-color: #ff4b4b;
+  box-shadow: 0 0 16px rgba(255,80,80,0.6);
 }
 
 .cam-window.focused .cam-window-inner {
   filter: grayscale(0) brightness(1.2);
 }
 
-/* ---------------------------------
-   DEBUG VISUALIZATION (KEEP ENABLED)
---------------------------------- */
-.cam-window-inner.cam-react-soft {
-  outline: 2px solid rgba(0,255,0,0.9) !important;
-  box-shadow: 0 0 22px rgba(0,255,0,0.7) !important;
-  filter: brightness(1.45) contrast(1.25) !important;
-}
-
-.cam-window-inner.cam-react-strong {
-  outline: 2px solid rgba(255,255,0,0.9) !important;
-  box-shadow: 0 0 26px rgba(255,255,0,0.9) !important;
-  transform: scale(1.04) !important;
-}
-
-.cam-window-inner.cam-ghost-flash::after {
-  content: "";
+.cam-label {
   position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.85);
-  opacity: 0.9;
-  pointer-events: none;
+  left: 8px;
+  bottom: 6px;
+  font-size: 10px;
+  color: #cdd0ff;
+  text-transform: uppercase;
+  opacity: 0.8;
 }
 
-/* ---------------------------------
-   SIDE PANEL
---------------------------------- */
+/* side panel */
 .side-panel {
-  flex: 1.15;
-  padding: 12px;
+  flex: 1.1;
   display: flex;
   flex-direction: column;
+  padding: 12px;
   background: radial-gradient(circle at top right, #171a29, #05060a 70%);
 }
 
 .panel-block {
+  background: linear-gradient(135deg, #0e1120, #090a12);
+  border: 1px solid rgba(80,90,120,0.5);
   padding: 12px;
   margin-bottom: 12px;
   border-radius: 8px;
-  border: 1px solid rgba(80, 90, 120, 0.5);
-  background: linear-gradient(145deg, #10131f, #06070d);
 }
 
-.panel-block h3 {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  margin-bottom: 4px;
-  color: #d0d6ff;
-}
-
-.panel-text {
-  font-size: 12px;
-  opacity: 0.85;
-}
 .panel-text-large {
   font-size: 30px;
   color: #ff5555;
 }
 
-/* ---------------------------------
-   GAZE DOT
---------------------------------- */
+/* gaze dot */
 #gaze-dot {
   position: fixed;
   width: 10px;
@@ -224,90 +157,19 @@ body {
   margin-top: -5px;
   border-radius: 50%;
   background: #ff4444;
-  box-shadow: 0 0 12px rgba(255,70,70,0.8);
+  box-shadow: 0 0 12px rgba(255,70,70,0.9);
+  z-index: 9999;
   pointer-events: none;
-  z-index: 5000;
-  display: block;
 }
 
-/* ---------------------------------
-   LOG CONSOLE
---------------------------------- */
-#scene-logs {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ---------------------------------
-   FINAL REPORT
---------------------------------- */
-#scene-report {
-  height: 100vh;
-  padding: 40px;
-  text-align: center;
-}
-
-/* ---------------------------------
-   HIDE WEBGAZER VIDEO FEED
---------------------------------- */
+/* hide webgazer video */
 #webgazerVideoFeed,
 #webgazerFaceOverlay,
 #webgazerFaceFeedbackBox {
   position: fixed !important;
-  top: -9999px !important;  /* hide it but keep full size */
+  top: -9999px !important;
   left: -9999px !important;
   width: 320px !important;
   height: 240px !important;
   opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* ================================
-   FIX: Force wall scene to show
-================================ */
-
-#scene-wall {
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100vh !important;
-}
-
-.wall-layout {
-  display: flex !important;
-  flex: 1 !important;
-  height: 100% !important;
-}
-
-/* VERY IMPORTANT: restore wall-grid height */
-#wall-grid {
-  flex: 3 !important;
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  grid-template-rows: repeat(2, 1fr) !important;
-  gap: 12px !important;
-  padding: 20px !important;
-  min-height: 300px !important; /* 防止被压扁 */
-  height: 100% !important;
-}
-
-/* FORCE SCENE VISIBILITY */
-#scene-wall {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-#scene-wall .wall-layout {
-  display: flex !important;
-}
-
-#wall-grid {
-  display: grid !important;
-}
-
-/* camera window must have size */
-.cam-window,
-.cam-window-inner {
-  min-height: 150px !important;
 }
