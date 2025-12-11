@@ -142,29 +142,6 @@
       scoreVoyeur.innerText = state.voyeurScore;
     }
   }
-async function startEyeTracking() {
-  console.log("[EYE] Starting WebGazer…");
-
-  // Force video element size to avoid 0x0 feed
-  const video = document.getElementById("webgazerVideoFeed");
-  if (video) {
-    video.width = 320;
-    video.height = 240;
-  }
-
-  try {
-    await webgazer.setRegression("ridge");
-    await webgazer.setTracker("clmtrackr");
-    webgazer.setGazeListener(onGaze);
-
-    await webgazer.begin();
-
-    state.gazeEnabled = true;
-    console.log("[EYE] WebGazer ready.");
-  } catch (err) {
-    console.error("[EYE] Error but continue:", err);
-  }
-}
 
   // =====================================================
   //  START EYE TRACKING
