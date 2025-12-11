@@ -22,9 +22,23 @@ body {
   overflow: hidden;
 }
 
-/* SCENES */
-.scene { display: none; }
-.scene.active { display: block; }
+/* ===================
+   SCENE DISPLAY RULES
+==================== */
+
+#scene-loading:not(.active),
+#scene-wall:not(.active),
+#scene-logs:not(.active),
+#scene-report:not(.active) {
+  display: none !important;
+}
+
+#scene-loading.active,
+#scene-wall.active,
+#scene-logs.active,
+#scene-report.active {
+  display: block !important;
+}
 
 /* ============================
    LOADING SCENE
