@@ -49,12 +49,12 @@ const state = {
 };
 
 const WINDOW_TYPES = [
-  "BEDROOM",
-  "OFFICE",
-  "CORRIDOR",
-  "ELEVATOR",
-  "LOBBY",
-  "KITCHEN",
+  "PRIVATE_SUITE",     // CAM_01 - Bedroom / High Privacy
+  "SERVICE_CORRIDOR",  // CAM_02 - 服务走廊
+  "STAIRWELL_C2",      // CAM_03 - Service Corridor
+  "REAR_ENTRANCE",     // CAM_04 - Back door
+  "PARKING_LOT_A",     // CAM_05 - Parking lot
+  "OFFICE_DESK_03",    // CAM_06 - Office desk
 ];
 
 /* =============== 2. Helpers =============== */
@@ -210,6 +210,7 @@ function createWallGrid() {
 
     const inner = document.createElement("div");
     inner.className = "cam-window-inner";
+    inner.dataset.camType = type;  // ★ 把类型写在 data-cam-type 上
     inner.style.backgroundImage =
       "linear-gradient(135deg, #1e1e2f, #0d0f1a)";
 
