@@ -291,6 +291,21 @@ body {
   height: 100% !important;
 }
 
+/* FORCE SCENE VISIBILITY */
+#scene-wall {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#scene-wall .wall-layout {
+  display: flex !important;
+}
+
+#wall-grid {
+  display: grid !important;
+}
+
 /* camera window must have size */
 .cam-window,
 .cam-window-inner {
