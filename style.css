@@ -1,11 +1,6 @@
 /* ============================
-   WINDOW / Anti-Surveillance UI
-   Completely Clean + FIXED VERSION
-   ============================ */
-
-/* ---------------------------------
-   RESET
---------------------------------- */
+   BASIC RESET
+============================ */
 *,
 *::before,
 *::after {
@@ -14,237 +9,142 @@
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-}
-
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  background: radial-gradient(circle at top, #161824 0%, #05060a 60%);
+  background: radial-gradient(circle at top, #161824, #05060a 70%);
   color: #e5e8ff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial;
   overflow: hidden;
 }
 
-/* ---------------------------------
-   SCENE VISIBILITY
---------------------------------- */
-.scene {
-  display: none;
-  width: 100%;
-  height: 100vh;
-}
+/* ============================
+   SCENE CONTROL
+============================ */
+.scene { display: none; }
+.scene.active { display: block; }
 
-.scene.active {
-  display: block;
-}
-
-/* ---------------------------------
-   LOADING SCREEN
---------------------------------- */
+/* ============================
+   LOADING SCENE
+============================ */
 #scene-loading {
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #c6caff;
-  background: radial-gradient(circle at top, #171927, #05060a 75%);
 }
 
-.system-title {
-  font-size: 16px;
+.center-box {
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 18px;
   letter-spacing: 0.15em;
-  margin-bottom: 14px;
 }
 
-#btn-start {
+.btn {
   padding: 10px 22px;
   border-radius: 999px;
-  background: #ff5353;
-  color: white;
-  cursor: pointer;
-  margin-top: 16px;
+  text-transform: uppercase;
   font-size: 12px;
-  letter-spacing: 0.18em;
-  box-shadow: 0 0 12px rgba(255, 83, 83, 0.5);
-  transition: 0.15s ease;
-}
-#btn-start:hover {
-  background: #ff6b6b;
-  transform: translateY(-1px);
+  cursor: pointer;
 }
 
-/* ---------------------------------
-   CCTV WALL SCENE
---------------------------------- */
+.primary {
+  background: #ff5353;
+  color: #fff;
+}
+
+/* ============================
+   WALL SCENE
+============================ */
 #scene-wall {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background: #05060a;
 }
 
-/* TOP BAR */
-#scene-wall header.top-bar {
-  height: 46px;
+.top-bar {
+  height: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
-  border-bottom: 1px solid rgba(80, 90, 120, 0.4);
-  background: linear-gradient(to right, #05060a, #10121e 60%, #05060a);
+  background: #090b14;
   color: #c7ccff;
-  letter-spacing: 0.18em;
-  font-size: 11px;
-  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-/* MAIN LAYOUT */
 .wall-layout {
+  flex: 1;
   display: flex;
-  width: 100%;
-  height: calc(100vh - 46px);
-  overflow: hidden;
 }
 
-/* ---------------------------------
-   WALL GRID (6 CAMERAS)
---------------------------------- */
 #wall-grid {
   flex: 3;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
   gap: 10px;
-  padding: 14px;
-  background: radial-gradient(circle at top, #151824, #05060a 65%);
-  border-right: 1px solid rgba(80, 90, 120, 0.2);
-  min-height: 300px;
+  padding: 12px;
 }
 
-/* CAMERA WINDOWS */
 .cam-window {
+  background: #0c0e16;
+  border: 1px solid rgba(255,255,255,0.2);
   position: relative;
-  background: #0a0c12;
-  border: 1px solid rgba(90, 95, 120, 0.45);
   overflow: hidden;
-  transition: 0.25s ease;
-  display: flex;
-  min-height: 150px;
 }
 
 .cam-window-inner {
   width: 100%;
   height: 100%;
-  background: rgba(255,255,255,0.03);
-  border: 1px dashed rgba(255,255,255,0.18);
-  filter: grayscale(0.45) brightness(0.95);
-  transition: 0.25s ease;
+  border: 1px dashed rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
 }
 
 .cam-label {
   position: absolute;
   bottom: 6px;
-  left: 8px;
+  left: 6px;
   font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #cbd0ff;
-  opacity: 0.75;
+  opacity: 0.8;
 }
 
-/* FOCUSED CAMERA */
-.cam-window.focused {
+.focused {
   border-color: #ff5353;
-  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
-}
-.cam-window.focused .cam-window-inner {
-  filter: grayscale(0) brightness(1.2);
+  box-shadow: 0 0 15px rgba(255,50,50,0.6);
 }
 
-/* ---------------------------------
-   SIDE PANEL
---------------------------------- */
+/* side panel */
 .side-panel {
-  flex: 1.15;
+  flex: 1.2;
   padding: 12px;
-  display: flex;
-  flex-direction: column;
-  background: radial-gradient(circle at top right, #171a29, #05060a 70%);
 }
 
 .panel-block {
-  padding: 12px;
   margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(80, 90, 120, 0.5);
-  background: linear-gradient(145deg, #10131f, #06070d);
-}
-
-.panel-block h3 {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  margin-bottom: 4px;
-  color: #d0d6ff;
-}
-
-.panel-text {
-  font-size: 12px;
-  opacity: 0.85;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: #0b0e18;
+  border-radius: 6px;
 }
 
 .panel-text-large {
-  font-size: 30px;
+  font-size: 28px;
   color: #ff5555;
 }
 
-/* ---------------------------------
-   GAZE DOT
---------------------------------- */
+/* gaze dot */
 #gaze-dot {
   position: fixed;
   width: 10px;
   height: 10px;
-  border-radius: 50%;
-  margin-left: -5px;
-  margin-top: -5px;
   background: #ff4444;
-  box-shadow: 0 0 12px rgba(255,70,70,0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255,60,60,.8);
+  transform: translate(-5px, -5px);
+  display: none;
   pointer-events: none;
-  z-index: 5000;
-  display: block;
-}
-
-/* ---------------------------------
-   LOG SCENE
---------------------------------- */
-#scene-logs {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ---------------------------------
-   REPORT SCENE
---------------------------------- */
-#scene-report {
-  height: 100vh;
-  padding: 40px;
-  text-align: center;
-  background: radial-gradient(circle at top, #171a29, #05060a 70%);
-}
-
-/* ---------------------------------
-   HIDE WEBGAZER VIDEO FEED
---------------------------------- */
-#webgazerVideoFeed,
-#webgazerFaceOverlay,
-#webgazerFaceFeedbackBox {
-  position: fixed !important;
-  top: -9999px !important;
-  left: -9999px !important;
-  width: 320px !important;
-  height: 240px !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+  z-index: 9999;
 }
