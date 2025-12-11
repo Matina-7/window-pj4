@@ -37,16 +37,11 @@
   const labelViewer = document.getElementById("label-viewer");
   const scoreVoyeur = document.getElementById("score-voyeur");
   const gazeDot = document.getElementById("gaze-dot");
-  const stabilityBar = document.getElementById("eye-stability");
 
   const logLines = document.getElementById("log-lines");
   const reportText = document.getElementById("report-text");
 
-  const calibrationOverlay = document.getElementById("calibration-overlay");
-  const btnCalibStart = document.getElementById("btn-calib-start");
-
   const wallGrid = document.getElementById("wall-grid");
-
 
   // =====================================================
   //  SCENE SWITCHING
@@ -60,7 +55,6 @@
     state.currentScene = name;
     console.log("[UI] Switched to:", name);
   }
-
 
   // =====================================================
   //  CREATE WALL GRID (6 CAMERAS)
@@ -91,25 +85,23 @@
     }
   }
 
-
   // =====================================================
-  //  GAZE SMOOTHING (One-Euro Filter style)
+  //  GAZE SMOOTHING
   // =====================================================
-  const SMOOTHING = 0.25;
+  const SMOOTH = 0.25;
 
-  function smoothGaze(x, y) {
+  function smooth(x, y) {
     if (state.smoothedX === null) {
       state.smoothedX = x;
       state.smoothedY = y;
       return { x, y };
     }
 
-    state.smoothedX = state.smoothedX + (x - state.smoothedX) * SMOOTHING;
-    state.smoothedY = state.smoothedY + (y - state.smoothedY) * SMOOTHING;
+    state.smoothedX += (x - state.smoothedX) * SMOOTH;
+    state.smoothedY += (y - state.smoothedY) * SMOOTH;
 
     return { x: state.smoothedX, y: state.smoothedY };
   }
-
 
   // =====================================================
   //  GAZE LISTENER
@@ -117,90 +109,81 @@
   function onGaze(pred) {
     if (!pred || !state.gazeEnabled) return;
 
-    const { x, y } = smoothGaze(pred.x, pred.y);
-    if (!x || !y) return;
-
-    // move red dot
+    const { x, y } = smooth(pred.x, pred.y);
     gazeDot.style.transform = `translate(${x}px, ${y}px)`;
 
     const el = document.elementFromPoint(x, y);
-    if (el && el.closest(".cam-window")) {
-      const cam = el.closest(".cam-window");
-      highlightCamera(cam);
-    }
+    if (!el) return;
+
+    const cam = el.closest(".cam-window");
+    if (cam) highlight(cam);
   }
 
-
   // =====================================================
-  //  HIGHLIGHTING + SCORE
+  //  HIGHLIGHT CAM
   // =====================================================
-  let lastHighlight = null;
-  let highlightTimer = 0;
+  let lastCam = null;
+  let gazeTicks = 0;
 
-  function highlightCamera(cam) {
-    if (!cam) return;
-
-    if (lastHighlight !== cam) {
+  function highlight(cam) {
+    if (lastCam !== cam) {
       document.querySelectorAll(".cam-window").forEach((c) => c.classList.remove("focused"));
       cam.classList.add("focused");
-      lastHighlight = cam;
-      highlightTimer = 0;
+
+      lastCam = cam;
+      gazeTicks = 0;
 
       labelViewer.innerText = cam.dataset.label;
     }
 
-    highlightTimer++;
-
-    // generate voyeur score
-    if (highlightTimer % 60 === 0) {
-      state.voyeurScore += 1;
+    gazeTicks++;
+    if (gazeTicks % 60 === 0) {
+      state.voyeurScore++;
       scoreVoyeur.innerText = state.voyeurScore;
     }
   }
 
-
   // =====================================================
-  //  EYETRACKING INITIALIZATION
+  //  START EYE TRACKING
   // =====================================================
   async function startEyeTracking() {
-    console.log("[EYE] Starting WebGazer...");
+    console.log("[EYE] Starting WebGazer…");
 
     try {
       await webgazer.setRegression("ridge");
       await webgazer.setTracker("clmtrackr");
       webgazer.setGazeListener(onGaze);
+
       await webgazer.begin();
 
       state.gazeEnabled = true;
-      console.log("[EYE] WebGazer fully initialized.");
+      console.log("[EYE] WebGazer ready.");
     } catch (err) {
-      console.error("[EYE] ERROR (ignored):", err);
+      console.error("[EYE] Error but continue:", err);
     }
   }
 
-
   // =====================================================
-  //  LOADING PAGE — START BUTTON
+  //  START BUTTON
   // =====================================================
   function initLoadingScreen() {
     if (!btnStart) return;
 
     btnStart.addEventListener("click", async () => {
-      console.log("[UI] Start pressed");
+      console.log("[UI] Start Calibration clicked.");
 
       try {
         await startEyeTracking();
-      } catch (e) {
-        console.error("[EYE] Init failure:", e);
+      } catch (err) {
+        console.error("[EYE] Failed:", err);
       } finally {
-        goToScene("wall");
+        goToScene("wall"); // ALWAYS GO TO WALL
       }
     });
   }
 
-
   // =====================================================
-  //  LOG PANEL
+  //  LOG SCREEN
   // =====================================================
   function initLogs() {
     if (!btnToLogs) return;
@@ -211,27 +194,27 @@
     });
   }
 
-
   // =====================================================
-  //  REPORT PANEL
+  //  REPORT SCREEN
   // =====================================================
   function initReport() {
-    if (!btnToReport) return;
+    if (btnToReport) {
+      btnToReport.addEventListener("click", () => {
+        reportText.innerHTML = `
+          <h3>Behavior Summary</h3>
+          <p>Most Watched: <b>${labelViewer.innerText}</b></p>
+          <p>Voyeur Score: <b>${state.voyeurScore}</b></p>
+        `;
+        goToScene("report");
+      });
+    }
 
-    btnToReport.addEventListener("click", () => {
-      reportText.innerHTML = `
-        <h3>Behavior Summary</h3>
-        <p>You spent most time watching: <b>${labelViewer.innerText}</b></p>
-        <p>Your voyeur tendency score: <b>${state.voyeurScore}</b></p>
-      `;
-      goToScene("report");
-    });
-
-    btnRestart.addEventListener("click", () => {
-      location.reload();
-    });
+    if (btnRestart) {
+      btnRestart.addEventListener("click", () => {
+        location.reload();
+      });
+    }
   }
-
 
   // =====================================================
   //  INIT
@@ -247,4 +230,5 @@
   }
 
   document.addEventListener("DOMContentLoaded", init);
-})();
+
+})(); // <— THIS WAS MISSING IN YOUR FILE
