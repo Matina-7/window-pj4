@@ -1,8 +1,11 @@
 /* ============================
-   WINDOW UI — Clean + Stable
-============================ */
+   WINDOW / Anti-Surveillance UI
+   Completely Clean + FIXED VERSION
+   ============================ */
 
-/* RESET */
+/* ---------------------------------
+   RESET
+--------------------------------- */
 *,
 *::before,
 *::after {
@@ -17,144 +20,177 @@ html, body {
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  background: radial-gradient(circle at top, #161824, #05060a 60%);
+  background: radial-gradient(circle at top, #161824 0%, #05060a 60%);
   color: #e5e8ff;
   overflow: hidden;
 }
 
-/* ===================
-   SCENE DISPLAY RULES
-==================== */
-
-#scene-loading:not(.active),
-#scene-wall:not(.active),
-#scene-logs:not(.active),
-#scene-report:not(.active) {
-  display: none !important;
-}
-
-#scene-loading.active,
-#scene-wall.active,
-#scene-logs.active,
-#scene-report.active {
-  display: block !important;
-}
-
-/* ============================
-   LOADING SCENE
-============================ */
-#scene-loading {
+/* ---------------------------------
+   SCENE VISIBILITY
+--------------------------------- */
+.scene {
+  display: none;
+  width: 100%;
   height: 100vh;
+}
+
+.scene.active {
+  display: block;
+}
+
+/* ---------------------------------
+   LOADING SCREEN
+--------------------------------- */
+#scene-loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  color: #c6caff;
+  background: radial-gradient(circle at top, #171927, #05060a 75%);
+}
+
+.system-title {
+  font-size: 16px;
+  letter-spacing: 0.15em;
+  margin-bottom: 14px;
 }
 
 #btn-start {
   padding: 10px 22px;
-  margin-top: 20px;
   border-radius: 999px;
   background: #ff5353;
   color: white;
   cursor: pointer;
-  box-shadow: 0 0 12px rgba(255,80,80,0.6);
+  margin-top: 16px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  box-shadow: 0 0 12px rgba(255, 83, 83, 0.5);
+  transition: 0.15s ease;
+}
+#btn-start:hover {
+  background: #ff6b6b;
+  transform: translateY(-1px);
 }
 
-/* ============================
-   WALL SCENE
-============================ */
+/* ---------------------------------
+   CCTV WALL SCENE
+--------------------------------- */
 #scene-wall {
-  display: flex !important;
+  display: flex;
   flex-direction: column;
-  height: 100vh !important;
+  height: 100vh;
+  background: #05060a;
 }
 
-/* header */
-#scene-wall header {
+/* TOP BAR */
+#scene-wall header.top-bar {
   height: 46px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
-  background: linear-gradient(to right, #05060a, #10121e);
-  border-bottom: 1px solid rgba(80,90,120,0.4);
+  border-bottom: 1px solid rgba(80, 90, 120, 0.4);
+  background: linear-gradient(to right, #05060a, #10121e 60%, #05060a);
+  color: #c7ccff;
+  letter-spacing: 0.18em;
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
 }
 
-/* layout */
+/* MAIN LAYOUT */
 .wall-layout {
-  flex: 1;
   display: flex;
+  width: 100%;
   height: calc(100vh - 46px);
+  overflow: hidden;
 }
 
-/* grid */
+/* ---------------------------------
+   WALL GRID (6 CAMERAS)
+--------------------------------- */
 #wall-grid {
   flex: 3;
-  display: grid !important;
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 12px;
-  padding: 16px;
-  background: radial-gradient(circle at top, #151824, #05060a 60%);
-  border-right: 1px solid rgba(80,90,120,0.2);
+  gap: 10px;
+  padding: 14px;
+  background: radial-gradient(circle at top, #151824, #05060a 65%);
+  border-right: 1px solid rgba(80, 90, 120, 0.2);
+  min-height: 300px;
 }
 
-/* camera window */
+/* CAMERA WINDOWS */
 .cam-window {
-  background: #0a0c12;
-  border: 1px solid rgba(90,95,120,0.45);
   position: relative;
-  min-height: 160px;
+  background: #0a0c12;
+  border: 1px solid rgba(90, 95, 120, 0.45);
   overflow: hidden;
+  transition: 0.25s ease;
+  display: flex;
+  min-height: 150px;
 }
 
 .cam-window-inner {
   width: 100%;
   height: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px dashed rgba(255,255,255,0.25);
-  filter: grayscale(0.4);
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.18);
+  filter: grayscale(0.45) brightness(0.95);
   transition: 0.25s ease;
-}
-
-.cam-window.focused {
-  border-color: #ff4b4b;
-  box-shadow: 0 0 16px rgba(255,80,80,0.6);
-}
-
-.cam-window.focused .cam-window-inner {
-  filter: grayscale(0) brightness(1.2);
 }
 
 .cam-label {
   position: absolute;
-  left: 8px;
   bottom: 6px;
+  left: 8px;
   font-size: 10px;
-  color: #cdd0ff;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  opacity: 0.8;
+  color: #cbd0ff;
+  opacity: 0.75;
 }
 
-/* side panel */
+/* FOCUSED CAMERA */
+.cam-window.focused {
+  border-color: #ff5353;
+  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
+}
+.cam-window.focused .cam-window-inner {
+  filter: grayscale(0) brightness(1.2);
+}
+
+/* ---------------------------------
+   SIDE PANEL
+--------------------------------- */
 .side-panel {
-  flex: 1.1;
+  flex: 1.15;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  padding: 12px;
   background: radial-gradient(circle at top right, #171a29, #05060a 70%);
 }
 
 .panel-block {
-  background: linear-gradient(135deg, #0e1120, #090a12);
-  border: 1px solid rgba(80,90,120,0.5);
   padding: 12px;
   margin-bottom: 12px;
   border-radius: 8px;
+  border: 1px solid rgba(80, 90, 120, 0.5);
+  background: linear-gradient(145deg, #10131f, #06070d);
+}
+
+.panel-block h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 4px;
+  color: #d0d6ff;
+}
+
+.panel-text {
+  font-size: 12px;
+  opacity: 0.85;
 }
 
 .panel-text-large {
@@ -162,21 +198,45 @@ body {
   color: #ff5555;
 }
 
-/* gaze dot */
+/* ---------------------------------
+   GAZE DOT
+--------------------------------- */
 #gaze-dot {
   position: fixed;
   width: 10px;
   height: 10px;
+  border-radius: 50%;
   margin-left: -5px;
   margin-top: -5px;
-  border-radius: 50%;
   background: #ff4444;
-  box-shadow: 0 0 12px rgba(255,70,70,0.9);
-  z-index: 9999;
+  box-shadow: 0 0 12px rgba(255,70,70,0.8);
   pointer-events: none;
+  z-index: 5000;
+  display: block;
 }
 
-/* hide webgazer video */
+/* ---------------------------------
+   LOG SCENE
+--------------------------------- */
+#scene-logs {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------
+   REPORT SCENE
+--------------------------------- */
+#scene-report {
+  height: 100vh;
+  padding: 40px;
+  text-align: center;
+  background: radial-gradient(circle at top, #171a29, #05060a 70%);
+}
+
+/* ---------------------------------
+   HIDE WEBGAZER VIDEO FEED
+--------------------------------- */
 #webgazerVideoFeed,
 #webgazerFaceOverlay,
 #webgazerFaceFeedbackBox {
@@ -186,4 +246,5 @@ body {
   width: 320px !important;
   height: 240px !important;
   opacity: 0 !important;
+  pointer-events: none !important;
 }
