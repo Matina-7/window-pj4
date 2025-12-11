@@ -184,19 +184,18 @@ function switchScene(name) {
 
 /* =============== 4. Loading screen =============== */
 function initLoadingScreen() {
-  loadingTextEl.innerHTML =
-    "Initializing WINDOW system...<br>" +
-    "Connecting to remote CCTV grid...<br>" +
-    "Preparing eye-tracking module...";
+  btnStart.addEventListener('click', async () => {
+    console.log('[UI] Start Calibration clicked.');
 
-  btnStart.addEventListener("click", () => {
-    calibrationOverlay.classList.remove("hidden");
-  });
-
-  btnCalibStart.addEventListener("click", () => {
-    calibrationOverlay.classList.add("hidden");
-    initGaze();
-    switchScene("wall");
+    try {
+      // 尝试启动眼动追踪
+      await startEyeTracking();   // 或者你原来用的 startEyeTrackingAndCalibration()
+    } catch (err) {
+      console.error('[EYE] Failed to init WebGazer, continue anyway:', err);
+    } finally {
+      // ★ 无论成功还是失败，都要进入监控墙
+      goToScene('wall');
+    }
   });
 }
 
